@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,22 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+/**
+ * Products — full CRUD access for Admin and Staff only.
+ */
+Route::middleware(['auth', 'verified', 'role:Admin|Staff'])
+    ->group(function () {
+        Route::resource('products', ProductController::class)->except(['index', 'show']);
+    });
+
+/**
+ * Products — read-only access for Admin, Staff, and Manager.
+ */
+Route::middleware(['auth', 'verified', 'role:Admin|Staff|Manager'])
+    ->group(function () {
+        Route::resource('products', ProductController::class)->only(['index', 'show']);
+    });
 
 /**
  * Admin-only routes — full access to all inventory management features.
