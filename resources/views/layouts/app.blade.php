@@ -233,6 +233,11 @@
                     <span class="c-sidebar__icon">&#9723;</span>
                     Data Barang
                 </a>
+                <a href="{{ route('borrowings.index') }}"
+                   class="c-sidebar__link {{ request()->routeIs('borrowings.*') ? 'active' : '' }}">
+                    <span class="c-sidebar__icon">&#9645;</span>
+                    Peminjaman
+                </a>
             </div>
             @endrole
 

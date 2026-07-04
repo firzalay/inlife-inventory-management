@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['borrower_name', 'borrow_date', 'return_date', 'status'])]
+#[Fillable(['borrower_name', 'borrow_date', 'due_date', 'return_date', 'status'])]
 class Borrowing extends Model
 {
     /** @use HasFactory<BorrowingFactory> */
@@ -23,6 +23,7 @@ class Borrowing extends Model
     {
         return [
             'borrow_date' => 'date',
+            'due_date' => 'date',
             'return_date' => 'date',
         ];
     }
@@ -33,5 +34,22 @@ class Borrowing extends Model
     public function details(): HasMany
     {
         return $this->hasMany(BorrowingDetail::class);
+    }
+
+    /**
+     * Get computed/dynamic status of the borrowing.
+     * Overdue is determined dynamically if return_date is null and today > due_date.
+     */
+    public function getComputedStatusAttribute(): string
+    {
+        if ($this->status === 'returned') {
+            return 'returned';
+        }
+
+        if (now()->startOfDay()->gt($this->due_date)) {
+            return 'overdue';
+        }
+
+        return 'borrowed';
     }
 }
