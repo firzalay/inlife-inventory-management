@@ -1,9 +1,239 @@
-@import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&display=swap');
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+/* ============================================================
+   IBM Carbon Design System — Token Variables
+   DESIGN.MD Reference: IBM Carbon, 4-ink palette
+   (Signal Red / White / Gray / Black)
+   ============================================================ */
+
+:root {
+    /* Brand & Accent */
+    --color-primary: #ff0d00;
+    --color-red-hover: #d90b00;
+    --color-red-80: #a60900;
+
+    /* Surfaces */
+    --color-canvas: #ffffff;
+    --color-surface-1: #f4f4f4;
+    --color-surface-2: #e0e0e0;
+    --color-hairline: #e0e0e0;
+    --color-hairline-strong: #000000;
+    --color-inverse-canvas: #000000;
+    --color-inverse-surface-1: #262626;
+
+    /* Text */
+    --color-ink: #000000;
+    --color-ink-muted: #4d4d4d;
+    --color-ink-subtle: #8c8c8c;
+    --color-inverse-ink: #ffffff;
+    --color-inverse-ink-muted: #b3b3b3;
+
+    /* Semantic */
+    --color-semantic-success: #24a148;
+    --color-semantic-warning: #f1c21b;
+    --color-semantic-error: #da1e28;
+
+    /* Border Radius — Carbon: flat geometry everywhere */
+    --rounded-none: 0px;
+
+    /* Spacing — 4px base grid */
+    --spacing-xxs: 4px;
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-xxl: 48px;
+    --spacing-section: 96px;
+}
+
+/* ============================================================
+   Base Reset — Carbon defaults
+   ============================================================ */
+
+@layer base {
+    * {
+        border-radius: 0 !important;
+    }
+
+    html {
+        font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+        font-size: 16px;
+        color: var(--color-ink);
+        background-color: var(--color-canvas);
+        -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+        letter-spacing: 0.16px;
+        line-height: 1.5;
+        font-weight: 400;
+    }
+
+    a {
+        color: var(--color-primary);
+        text-decoration: none;
+    }
+
+    a:hover {
+        color: var(--color-red-hover);
+        text-decoration: underline;
+    }
+
+    h1, h2, h3 {
+        font-weight: 300;
+        letter-spacing: -0.02em;
+        line-height: 1.17;
+    }
+}
+
+/* ============================================================
+   Carbon Button Components
+   ============================================================ */
+
+@layer components {
+    /* Primary — Signal Red */
+    .btn-primary {
+        @apply inline-flex items-center justify-center px-4 py-3 text-sm font-normal text-white transition-colors duration-150;
+        background-color: var(--color-primary);
+        letter-spacing: 0.16px;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--color-red-hover);
+        text-decoration: none;
+        color: white;
+    }
+
+    .btn-primary:active {
+        background-color: var(--color-red-80);
+    }
+
+    /* Secondary — Black */
+    .btn-secondary {
+        @apply inline-flex items-center justify-center px-4 py-3 text-sm font-normal text-white transition-colors duration-150;
+        background-color: var(--color-ink);
+        letter-spacing: 0.16px;
+    }
+
+    .btn-secondary:hover {
+        background-color: var(--color-inverse-surface-1);
+        text-decoration: none;
+        color: white;
+    }
+
+    /* Tertiary — White with red border */
+    .btn-tertiary {
+        @apply inline-flex items-center justify-center px-4 py-3 text-sm font-normal transition-colors duration-150;
+        background-color: var(--color-canvas);
+        color: var(--color-primary);
+        border: 1px solid var(--color-primary);
+        letter-spacing: 0.16px;
+    }
+
+    .btn-tertiary:hover {
+        background-color: var(--color-surface-1);
+        text-decoration: none;
+    }
+
+    /* Danger */
+    .btn-danger {
+        @apply inline-flex items-center justify-center px-4 py-3 text-sm font-normal text-white transition-colors duration-150;
+        background-color: var(--color-semantic-error);
+        letter-spacing: 0.16px;
+    }
+
+    .btn-danger:hover {
+        background-color: #b81922;
+        text-decoration: none;
+        color: white;
+    }
+
+    /* ============================================================
+       Carbon Input Components
+       ============================================================ */
+
+    .carbon-input {
+        @apply block w-full text-sm py-[11px] px-4 transition-all duration-150;
+        background-color: var(--color-surface-1);
+        color: var(--color-ink);
+        border: none;
+        border-bottom: 1px solid var(--color-hairline-strong);
+        letter-spacing: 0.16px;
+        outline: none;
+    }
+
+    .carbon-input:focus {
+        border-bottom: 2px solid var(--color-primary);
+    }
+
+    .carbon-input::placeholder {
+        color: var(--color-ink-subtle);
+    }
+
+    /* Carbon input label */
+    .carbon-label {
+        @apply block text-xs font-normal mb-1;
+        color: var(--color-ink-muted);
+        letter-spacing: 0.32px;
+    }
+
+    /* ============================================================
+       Carbon Card Components
+       ============================================================ */
+
+    .feature-card {
+        @apply p-6;
+        background-color: var(--color-canvas);
+        border: 1px solid var(--color-hairline);
+    }
+
+    .feature-card-elevated {
+        @apply p-6;
+        background-color: var(--color-surface-1);
+        border: 1px solid var(--color-hairline);
+    }
+
+    /* ============================================================
+       Auth Layout — Carbon Guest Shell
+       ============================================================ */
+
+    .auth-shell {
+        @apply min-h-screen flex flex-col items-center justify-center;
+        background-color: var(--color-surface-1);
+    }
+
+    .auth-card {
+        @apply w-full p-8;
+        max-width: 400px;
+        background-color: var(--color-canvas);
+        border: 1px solid var(--color-hairline);
+    }
+
+    /* ============================================================
+       Navigation
+       ============================================================ */
+
+    .top-nav {
+        @apply flex items-center justify-between px-6;
+        height: 48px;
+        background-color: var(--color-canvas);
+        border-bottom: 1px solid var(--color-hairline);
+    }
+
+    /* ============================================================
+       Footer — inverted black surface
+       ============================================================ */
+
+    .site-footer {
+        @apply px-8 py-16;
+        background-color: var(--color-inverse-canvas);
+        color: var(--color-inverse-ink-muted);
+        font-size: 14px;
+        letter-spacing: 0.16px;
+    }
 }
