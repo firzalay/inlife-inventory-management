@@ -71,55 +71,82 @@
                 @enderror
             </div>
 
-            {{-- Stok & Lokasi (2-column) --}}
-            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 24px;">
-                <div>
-                    <label for="stock" style="display: block; font-size: 12px; color: #4d4d4d; letter-spacing: 0.32px; margin-bottom: 4px;">
-                        Stok <span style="color: #da1e28;">*</span>
-                    </label>
-                    <input type="number"
-                           id="stock"
-                           name="stock"
-                           value="{{ old('stock', 0) }}"
-                           min="0"
-                           style="width: 100%; padding: 11px 16px; background: #f4f4f4; border: none; border-bottom: 1px solid #000; font-size: 14px; letter-spacing: 0.16px; outline: none; font-family: inherit;"
-                           onfocus="this.style.borderBottom='2px solid #ff0d00'"
-                           onblur="this.style.borderBottom='1px solid #000'">
-                    @error('stock')
-                        <p style="margin: 4px 0 0; font-size: 12px; color: #da1e28; letter-spacing: 0.32px;">{{ $message }}</p>
-                    @enderror
-                </div>
+            {{-- Stok Breakdown --}}
+            <div style="margin-bottom: 24px;">
+                <p style="font-size: 12px; color: #4d4d4d; letter-spacing: 0.32px; margin: 0 0 12px; font-weight: 600; text-transform: uppercase;">Stok Berdasarkan Kondisi</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
 
-                <div>
-                    <label for="location" style="display: block; font-size: 12px; color: #4d4d4d; letter-spacing: 0.32px; margin-bottom: 4px;">
-                        Lokasi Penyimpanan <span style="color: #da1e28;">*</span>
-                    </label>
-                    <input type="text"
-                           id="location"
-                           name="location"
-                           value="{{ old('location') }}"
-                           placeholder="Gudang A Rak 01"
-                           style="width: 100%; padding: 11px 16px; background: #f4f4f4; border: none; border-bottom: 1px solid #000; font-size: 14px; letter-spacing: 0.16px; outline: none; font-family: inherit;"
-                           onfocus="this.style.borderBottom='2px solid #ff0d00'"
-                           onblur="this.style.borderBottom='1px solid #000'">
-                    @error('location')
-                        <p style="margin: 4px 0 0; font-size: 12px; color: #da1e28; letter-spacing: 0.32px;">{{ $message }}</p>
-                    @enderror
+                    {{-- Stok Baik --}}
+                    <div>
+                        <label for="stock_baik" style="display: block; font-size: 12px; color: #4d4d4d; letter-spacing: 0.32px; margin-bottom: 4px;">
+                            Stok Baik <span style="color: #da1e28;">*</span>
+                        </label>
+                        <input type="number"
+                               id="stock_baik"
+                               name="stock_baik"
+                               value="{{ old('stock_baik', 0) }}"
+                               min="0"
+                               style="width: 100%; padding: 11px 16px; background: #f4f4f4; border: none; border-bottom: 1px solid #000; font-size: 14px; letter-spacing: 0.16px; outline: none; font-family: inherit;"
+                               onfocus="this.style.borderBottom='2px solid #ff0d00'"
+                               onblur="this.style.borderBottom='1px solid #000'">
+                        @error('stock_baik')
+                            <p style="margin: 4px 0 0; font-size: 12px; color: #da1e28; letter-spacing: 0.32px;">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Stok Rusak --}}
+                    <div>
+                        <label for="stock_rusak" style="display: block; font-size: 12px; color: #4d4d4d; letter-spacing: 0.32px; margin-bottom: 4px;">
+                            Stok Rusak
+                        </label>
+                        <input type="number"
+                               id="stock_rusak"
+                               name="stock_rusak"
+                               value="{{ old('stock_rusak', 0) }}"
+                               min="0"
+                               style="width: 100%; padding: 11px 16px; background: #f4f4f4; border: none; border-bottom: 1px solid #000; font-size: 14px; letter-spacing: 0.16px; outline: none; font-family: inherit;"
+                               onfocus="this.style.borderBottom='2px solid #ff0d00'"
+                               onblur="this.style.borderBottom='1px solid #000'">
+                        @error('stock_rusak')
+                            <p style="margin: 4px 0 0; font-size: 12px; color: #da1e28; letter-spacing: 0.32px;">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Stok Perlu Perbaikan --}}
+                    <div>
+                        <label for="stock_perlu_perbaikan" style="display: block; font-size: 12px; color: #4d4d4d; letter-spacing: 0.32px; margin-bottom: 4px;">
+                            Perlu Perbaikan
+                        </label>
+                        <input type="number"
+                               id="stock_perlu_perbaikan"
+                               name="stock_perlu_perbaikan"
+                               value="{{ old('stock_perlu_perbaikan', 0) }}"
+                               min="0"
+                               style="width: 100%; padding: 11px 16px; background: #f4f4f4; border: none; border-bottom: 1px solid #000; font-size: 14px; letter-spacing: 0.16px; outline: none; font-family: inherit;"
+                               onfocus="this.style.borderBottom='2px solid #ff0d00'"
+                               onblur="this.style.borderBottom='1px solid #000'">
+                        @error('stock_perlu_perbaikan')
+                            <p style="margin: 4px 0 0; font-size: 12px; color: #da1e28; letter-spacing: 0.32px;">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                 </div>
             </div>
 
-            {{-- Kondisi --}}
+            {{-- Lokasi --}}
             <div style="margin-bottom: 24px;">
-                <label for="condition" style="display: block; font-size: 12px; color: #4d4d4d; letter-spacing: 0.32px; margin-bottom: 4px;">
-                    Kondisi Barang <span style="color: #da1e28;">*</span>
+                <label for="location" style="display: block; font-size: 12px; color: #4d4d4d; letter-spacing: 0.32px; margin-bottom: 4px;">
+                    Lokasi Penyimpanan <span style="color: #da1e28;">*</span>
                 </label>
-                <select id="condition" name="condition"
-                        style="width: 100%; padding: 11px 16px; background: #f4f4f4; border: none; border-bottom: 1px solid #000; font-size: 14px; letter-spacing: 0.16px; outline: none; font-family: inherit; cursor: pointer;">
-                    <option value="good" {{ old('condition', 'good') === 'good' ? 'selected' : '' }}>Baik</option>
-                    <option value="damaged" {{ old('condition') === 'damaged' ? 'selected' : '' }}>Rusak</option>
-                    <option value="lost" {{ old('condition') === 'lost' ? 'selected' : '' }}>Hilang</option>
-                </select>
-                @error('condition')
+                <input type="text"
+                       id="location"
+                       name="location"
+                       value="{{ old('location') }}"
+                       placeholder="Gudang A Rak 01"
+                       style="width: 100%; padding: 11px 16px; background: #f4f4f4; border: none; border-bottom: 1px solid #000; font-size: 14px; letter-spacing: 0.16px; outline: none; font-family: inherit;"
+                       onfocus="this.style.borderBottom='2px solid #ff0d00'"
+                       onblur="this.style.borderBottom='1px solid #000'">
+                @error('location')
                     <p style="margin: 4px 0 0; font-size: 12px; color: #da1e28; letter-spacing: 0.32px;">{{ $message }}</p>
                 @enderror
             </div>

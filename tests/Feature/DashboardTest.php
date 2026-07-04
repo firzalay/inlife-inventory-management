@@ -79,8 +79,9 @@ test('dashboard stats are cached and cleared on product change', function () {
 
     Product::factory()->create([
         'category_id' => $this->category->id,
-        'stock' => 10,
-        'condition' => 'good',
+        'stock_baik' => 10,
+        'stock_rusak' => 2,
+        'stock_perlu_perbaikan' => 0,
     ]);
 
     expect(Cache::has('dashboard_stats'))->toBeFalse();
@@ -91,23 +92,24 @@ test('dashboard stats are cached and cleared on product change', function () {
 
     // Modify a product to check if cache is invalidated
     $product = Product::first();
-    $product->update(['stock' => 8]);
+    $product->update(['stock_baik' => 8]);
 
     expect(Cache::has('dashboard_stats'))->toBeFalse();
 });
 
 // ── LOW STOCK NOTIFICATIONS ──
 
-test('notifies admin and staff when product stock is at or below threshold', function () {
+test('notifies admin and staff when product stock_baik is at or below threshold', function () {
     $admin = createDashboardUserWithRole('Admin');
     $staff = createDashboardUserWithRole('Staff');
     $manager = createDashboardUserWithRole('Manager');
 
-    // Create a product with stock above threshold (e.g. 10)
+    // Create a product with stock_baik above threshold (e.g. 10)
     $product = Product::factory()->create([
         'category_id' => $this->category->id,
-        'stock' => 10,
-        'condition' => 'good',
+        'stock_baik' => 10,
+        'stock_rusak' => 5,
+        'stock_perlu_perbaikan' => 3,
     ]);
 
     // Clear notifications sent on creation
@@ -115,8 +117,8 @@ test('notifies admin and staff when product stock is at or below threshold', fun
     $staff->unreadNotifications()->delete();
     $manager->unreadNotifications()->delete();
 
-    // Trigger update stock to <= threshold
-    $product->update(['stock' => 4]);
+    // Trigger update: stock_baik drops to <= threshold (5), while rusak/perlu stay unchanged
+    $product->update(['stock_baik' => 4]);
 
     // Admin & Staff must receive DB notifications
     expect($admin->unreadNotifications()->count())->toBe(1)
@@ -128,4 +130,23 @@ test('notifies admin and staff when product stock is at or below threshold', fun
     $notif = $admin->unreadNotifications()->first();
     expect($notif->data['message'])->toContain($product->name)
         ->and($notif->data['stock'])->toBe(4);
+});
+
+test('notification threshold only checks stock_baik, not total stock', function () {
+    $admin = createDashboardUserWithRole('Admin');
+
+    // Product with low stock_baik but high total stock
+    $product = Product::factory()->create([
+        'category_id' => $this->category->id,
+        'stock_baik' => 10,
+        'stock_rusak' => 50,
+        'stock_perlu_perbaikan' => 30,
+    ]);
+
+    $admin->unreadNotifications()->delete();
+
+    // Drop stock_baik to threshold — should trigger notification despite high total stock
+    $product->update(['stock_baik' => 3]);
+
+    expect($admin->unreadNotifications()->count())->toBe(1);
 });

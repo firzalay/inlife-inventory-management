@@ -67,7 +67,6 @@
                         ['Kode Barang', $product->code],
                         ['Nama', $product->name],
                         ['Kategori', $product->category?->name ?? '—'],
-                        ['Stok', number_format($product->stock).' unit'],
                         ['Lokasi Penyimpanan', $product->location],
                     ] as [$label, $value])
                         <div style="display: flex; padding: 12px 16px; border-bottom: 1px solid #e0e0e0;">
@@ -75,10 +74,30 @@
                             <span style="font-size: 14px; color: #000; flex: 1;">{{ $value }}</span>
                         </div>
                     @endforeach
-                    <div style="display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid #e0e0e0;">
-                        <span style="width: 160px; font-size: 12px; color: #4d4d4d; letter-spacing: 0.32px; flex-shrink: 0;">Kondisi</span>
-                        <x-product-condition-badge :condition="$product->condition" />
+
+                    {{-- Split Stock Breakdown --}}
+                    <div style="display: flex; padding: 12px 16px; border-bottom: 1px solid #e0e0e0; gap: 24px;">
+                        <span style="width: 160px; font-size: 12px; color: #4d4d4d; letter-spacing: 0.32px; flex-shrink: 0; padding-top: 2px;">Stok Berdasarkan Kondisi</span>
+                        <div style="display: flex; gap: 16px; flex: 1;">
+                            <div style="text-align: center; min-width: 60px;">
+                                <div style="font-size: 20px; font-weight: 700; color: #24a148;">{{ $product->stock_baik }}</div>
+                                <div style="font-size: 11px; color: #4d4d4d; letter-spacing: 0.32px;">Baik</div>
+                            </div>
+                            <div style="text-align: center; min-width: 60px;">
+                                <div style="font-size: 20px; font-weight: 700; color: #da1e28;">{{ $product->stock_rusak }}</div>
+                                <div style="font-size: 11px; color: #4d4d4d; letter-spacing: 0.32px;">Rusak</div>
+                            </div>
+                            <div style="text-align: center; min-width: 80px;">
+                                <div style="font-size: 20px; font-weight: 700; color: #f1c21b;">{{ $product->stock_perlu_perbaikan }}</div>
+                                <div style="font-size: 11px; color: #4d4d4d; letter-spacing: 0.32px;">Perlu Perbaikan</div>
+                            </div>
+                            <div style="text-align: center; min-width: 60px; border-left: 1px solid #e0e0e0; padding-left: 16px;">
+                                <div style="font-size: 20px; font-weight: 700; color: #000;">{{ $product->total_stock }}</div>
+                                <div style="font-size: 11px; color: #4d4d4d; letter-spacing: 0.32px;">Total</div>
+                            </div>
+                        </div>
                     </div>
+
                     <div style="display: flex; padding: 12px 16px;">
                         <span style="width: 160px; font-size: 12px; color: #4d4d4d; letter-spacing: 0.32px; flex-shrink: 0;">Ditambahkan</span>
                         <span style="font-size: 14px; color: #000;">{{ $product->created_at->format('d M Y') }}</span>

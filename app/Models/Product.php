@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 
-#[Fillable(['code', 'name', 'category_id', 'stock', 'location', 'condition', 'image'])]
+#[Fillable(['code', 'name', 'category_id', 'stock_baik', 'stock_rusak', 'stock_perlu_perbaikan', 'location', 'image'])]
 class Product extends Model
 {
     /** @use HasFactory<ProductFactory> */
@@ -28,8 +28,11 @@ class Product extends Model
 
             $threshold = config('inventory.low_stock_threshold', 5);
 
-            // Only notify if stock was changed and has reached or dropped below threshold
-            if ($product->stock <= $threshold && ($product->wasChanged('stock') || $product->wasRecentlyCreated)) {
+            // Only notify if stock_baik was changed and has reached or dropped below threshold
+            if (
+                $product->stock_baik <= $threshold
+                && ($product->wasChanged('stock_baik') || $product->wasRecentlyCreated)
+            ) {
                 $recipients = User::role(['Admin', 'Staff'])->get();
                 foreach ($recipients as $user) {
                     $user->notify(new LowStockNotification($product));
@@ -50,8 +53,26 @@ class Product extends Model
     protected function casts(): array
     {
         return [
-            'stock' => 'integer',
+            'stock_baik' => 'integer',
+            'stock_rusak' => 'integer',
+            'stock_perlu_perbaikan' => 'integer',
         ];
+    }
+
+    /**
+     * Get total stock across all conditions.
+     */
+    public function getTotalStockAttribute(): int
+    {
+        return $this->stock_baik + $this->stock_rusak + $this->stock_perlu_perbaikan;
+    }
+
+    /**
+     * Get available stock (only good-condition units eligible for borrowing).
+     */
+    public function getAvailableStockAttribute(): int
+    {
+        return $this->stock_baik;
     }
 
     /**

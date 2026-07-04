@@ -58,7 +58,8 @@ class BorrowingController extends Controller
      */
     public function create(): View
     {
-        $products = Product::where('stock', '>', 0)
+        // Only products with available (good-condition) stock can be borrowed
+        $products = Product::where('stock_baik', '>', 0)
             ->orderBy('name')
             ->get();
 
@@ -87,9 +88,9 @@ class BorrowingController extends Controller
                     'quantity' => $item['quantity'],
                 ]);
 
-                // Deduct product stock
-                $product = Product::findOrFail($item['product_id']);
-                $product->decrement('stock', $item['quantity']);
+                // Deduct from good-condition stock only
+                $product = Product::lockForUpdate()->findOrFail($item['product_id']);
+                $product->decrement('stock_baik', $item['quantity']);
             }
         });
 
@@ -108,7 +109,7 @@ class BorrowingController extends Controller
     }
 
     /**
-     * Process return of goods.
+     * Process return of goods and route returned stock to the correct condition column.
      */
     public function returnGoods(Request $request, Borrowing $borrowing): RedirectResponse
     {
@@ -123,7 +124,7 @@ class BorrowingController extends Controller
 
         $request->validate([
             'conditions' => ['required', 'array'],
-            'conditions.*' => ['required', 'string', 'in:Baik,Rusak,Hilang'],
+            'conditions.*' => ['required', 'string', 'in:Baik,Rusak,Perlu Perbaikan,Hilang'],
         ]);
 
         DB::transaction(function () use ($request, $borrowing) {
@@ -140,10 +141,15 @@ class BorrowingController extends Controller
                     'condition_on_return' => $condition,
                 ]);
 
-                // Restore stock
-                $product = $detail->product;
+                // Route returned units back to the appropriate condition stock column
+                $product = Product::lockForUpdate()->find($detail->product_id);
                 if ($product) {
-                    $product->increment('stock', $detail->quantity);
+                    match ($condition) {
+                        'Baik' => $product->increment('stock_baik', $detail->quantity),
+                        'Rusak' => $product->increment('stock_rusak', $detail->quantity),
+                        'Perlu Perbaikan' => $product->increment('stock_perlu_perbaikan', $detail->quantity),
+                        default => null, // 'Hilang' — no stock restoration
+                    };
                 }
             }
         });

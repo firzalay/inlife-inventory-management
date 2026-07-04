@@ -45,16 +45,6 @@
             </select>
         </div>
 
-        <div style="min-width: 140px;">
-            <label style="display: block; font-size: 12px; color: #4d4d4d; letter-spacing: 0.32px; margin-bottom: 4px;">Kondisi</label>
-            <select id="condition" name="condition"
-                    style="width: 100%; padding: 11px 16px; background: #f4f4f4; border: none; border-bottom: 1px solid #000; font-size: 14px; letter-spacing: 0.16px; outline: none; font-family: inherit; cursor: pointer;">
-                <option value="">Semua Kondisi</option>
-                <option value="good" {{ request('condition') === 'good' ? 'selected' : '' }}>Baik</option>
-                <option value="damaged" {{ request('condition') === 'damaged' ? 'selected' : '' }}>Rusak</option>
-                <option value="lost" {{ request('condition') === 'lost' ? 'selected' : '' }}>Hilang</option>
-            </select>
-        </div>
 
         <div style="display: flex; align-items: flex-end; gap: 8px;">
             <button type="submit" id="btn-filter"
@@ -63,7 +53,7 @@
                     onmouseout="this.style.background='#000'">
                 Filter
             </button>
-            @if(request()->hasAny(['search','category_id','condition']))
+            @if(request()->hasAny(['search','category_id']))
                 <a href="{{ route('products.index') }}"
                    style="padding: 12px 16px; background: #f4f4f4; color: #4d4d4d; font-size: 14px; text-decoration: none; letter-spacing: 0.16px; border: 1px solid #e0e0e0;"
                    onmouseover="this.style.background='#e0e0e0'"
@@ -88,8 +78,10 @@
                         <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #000; letter-spacing: 0.16px;">Kode</th>
                         <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #000; letter-spacing: 0.16px;">Nama Barang</th>
                         <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #000; letter-spacing: 0.16px;">Kategori</th>
-                        <th style="padding: 12px 16px; text-align: right; font-weight: 600; color: #000; letter-spacing: 0.16px;">Stok</th>
-                        <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #000; letter-spacing: 0.16px;">Kondisi</th>
+                        <th style="padding: 12px 16px; text-align: right; font-weight: 600; color: #000; letter-spacing: 0.16px;">Baik</th>
+                         <th style="padding: 12px 16px; text-align: right; font-weight: 600; color: #000; letter-spacing: 0.16px;">Rusak</th>
+                         <th style="padding: 12px 16px; text-align: right; font-weight: 600; color: #000; letter-spacing: 0.16px;">Perlu Perbaikan</th>
+                         <th style="padding: 12px 16px; text-align: right; font-weight: 600; color: #000; letter-spacing: 0.16px;">Total</th>
                         <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #000; letter-spacing: 0.16px;">Lokasi</th>
                         <th style="padding: 12px 16px; text-align: right; font-weight: 600; color: #000; letter-spacing: 0.16px;">Aksi</th>
                     </tr>
@@ -116,10 +108,10 @@
                                 </a>
                             </td>
                             <td style="padding: 12px 16px; color: #4d4d4d;">{{ $product->category?->name ?? '—' }}</td>
-                            <td style="padding: 12px 16px; text-align: right; color: #000; font-weight: 600;">{{ number_format($product->stock) }}</td>
-                            <td style="padding: 12px 16px;">
-                                <x-product-condition-badge :condition="$product->condition" />
-                            </td>
+                            <td style="padding: 12px 16px; text-align: right; color: #24a148; font-weight: 600;">{{ $product->stock_baik }}</td>
+                             <td style="padding: 12px 16px; text-align: right; color: #da1e28; font-weight: 600;">{{ $product->stock_rusak }}</td>
+                             <td style="padding: 12px 16px; text-align: right; color: #f1c21b; font-weight: 600;">{{ $product->stock_perlu_perbaikan }}</td>
+                             <td style="padding: 12px 16px; text-align: right; color: #000; font-weight: 600; border-left: 1px solid #e0e0e0;">{{ $product->total_stock }}</td>
                             <td style="padding: 12px 16px; color: #4d4d4d;">{{ $product->location }}</td>
                             <td style="padding: 12px 16px; text-align: right;">
                                 <div style="display: inline-flex; gap: 8px; align-items: center;">

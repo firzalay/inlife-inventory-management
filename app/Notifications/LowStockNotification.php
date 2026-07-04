@@ -39,8 +39,8 @@ class LowStockNotification extends Notification
             'product_id' => $this->product->id,
             'name' => $this->product->name,
             'code' => $this->product->code,
-            'stock' => $this->product->stock,
-            'message' => "Stok barang '{$this->product->name}' menipis! Sisa stok: {$this->product->stock} unit.",
+            'stock' => $this->product->stock_baik,
+            'message' => "Stok barang '{$this->product->name}' menipis! Stok baik tersisa: {$this->product->stock_baik} unit.",
         ];
     }
 }

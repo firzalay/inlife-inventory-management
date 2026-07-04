@@ -26,9 +26,10 @@ class StoreProductRequest extends FormRequest
             'code' => ['required', 'string', 'max:50', 'unique:products,code'],
             'name' => ['required', 'string', 'max:255'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
-            'stock' => ['required', 'integer', 'min:0'],
+            'stock_baik' => ['required', 'integer', 'min:0'],
+            'stock_rusak' => ['required', 'integer', 'min:0'],
+            'stock_perlu_perbaikan' => ['required', 'integer', 'min:0'],
             'location' => ['required', 'string', 'max:255'],
-            'condition' => ['required', 'in:good,damaged,lost'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ];
     }
@@ -44,9 +45,10 @@ class StoreProductRequest extends FormRequest
             'code' => 'kode barang',
             'name' => 'nama barang',
             'category_id' => 'kategori',
-            'stock' => 'stok',
+            'stock_baik' => 'stok baik',
+            'stock_rusak' => 'stok rusak',
+            'stock_perlu_perbaikan' => 'stok perlu perbaikan',
             'location' => 'lokasi penyimpanan',
-            'condition' => 'kondisi barang',
             'image' => 'gambar barang',
         ];
     }

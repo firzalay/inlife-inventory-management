@@ -18,13 +18,18 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
+        $stockBaik = fake()->numberBetween(0, 80);
+        $stockRusak = fake()->numberBetween(0, 15);
+        $stockPerluPerbaikan = fake()->numberBetween(0, 10);
+
         return [
             'code' => strtoupper(fake()->unique()->bothify('PRD-####')),
             'name' => fake()->words(3, true),
             'category_id' => Category::factory(),
-            'stock' => fake()->numberBetween(0, 100),
+            'stock_baik' => $stockBaik,
+            'stock_rusak' => $stockRusak,
+            'stock_perlu_perbaikan' => $stockPerluPerbaikan,
             'location' => fake()->bothify('Gudang-?? Rak-##'),
-            'condition' => fake()->randomElement(['good', 'damaged', 'lost']),
             'image' => null,
         ];
     }

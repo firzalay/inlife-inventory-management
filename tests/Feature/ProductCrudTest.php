@@ -62,7 +62,7 @@ test('manager can access product index but NOT create page', function () {
 
 // ── CRUD OPERATIONS (ADMIN/STAFF) ──
 
-test('admin can store a new product with image', function () {
+test('admin can store a new product with image and split stock', function () {
     Storage::fake('public');
     $admin = createProductUserWithRole('Admin');
     $image = UploadedFile::fake()->image('laptop.jpg');
@@ -71,9 +71,10 @@ test('admin can store a new product with image', function () {
         'code' => 'PRD-9999',
         'name' => 'Laptop ThinkPad',
         'category_id' => $this->category->id,
-        'stock' => 15,
+        'stock_baik' => 10,
+        'stock_rusak' => 2,
+        'stock_perlu_perbaikan' => 1,
         'location' => 'Rak A1',
-        'condition' => 'good',
         'image' => $image,
     ];
 
@@ -83,13 +84,16 @@ test('admin can store a new product with image', function () {
     $this->assertDatabaseHas('products', [
         'code' => 'PRD-9999',
         'name' => 'Laptop ThinkPad',
-        'stock' => 15,
+        'stock_baik' => 10,
+        'stock_rusak' => 2,
+        'stock_perlu_perbaikan' => 1,
         'location' => 'Rak A1',
-        'condition' => 'good',
     ]);
 
     $product = Product::where('code', 'PRD-9999')->first();
     expect($product->image)->not->toBeNull();
+    expect($product->total_stock)->toBe(13);
+    expect($product->available_stock)->toBe(10);
     Storage::disk('public')->assertExists($product->image);
 });
 
@@ -100,9 +104,10 @@ test('manager cannot store a new product', function () {
         'code' => 'PRD-8888',
         'name' => 'Kamera Canon',
         'category_id' => $this->category->id,
-        'stock' => 5,
+        'stock_baik' => 5,
+        'stock_rusak' => 0,
+        'stock_perlu_perbaikan' => 0,
         'location' => 'Rak B2',
-        'condition' => 'good',
     ];
 
     $response = $this->actingAs($manager)->post(route('products.store'), $productData);
@@ -128,9 +133,10 @@ test('staff can update product details and replace image', function () {
         'code' => 'PRD-UPDATED',
         'name' => 'Updated Name',
         'category_id' => $this->category->id,
-        'stock' => 20,
+        'stock_baik' => 15,
+        'stock_rusak' => 3,
+        'stock_perlu_perbaikan' => 2,
         'location' => 'Rak C3',
-        'condition' => 'damaged',
         'image' => $newImage,
     ];
 
@@ -141,8 +147,10 @@ test('staff can update product details and replace image', function () {
     $product->refresh();
     expect($product->code)->toBe('PRD-UPDATED')
         ->and($product->name)->toBe('Updated Name')
-        ->and($product->stock)->toBe(20)
-        ->and($product->condition)->toBe('damaged');
+        ->and($product->stock_baik)->toBe(15)
+        ->and($product->stock_rusak)->toBe(3)
+        ->and($product->stock_perlu_perbaikan)->toBe(2)
+        ->and($product->total_stock)->toBe(20);
 
     Storage::disk('public')->assertMissing($oldPath);
     Storage::disk('public')->assertExists($product->image);
@@ -156,9 +164,10 @@ test('manager cannot update product', function () {
         'code' => 'PRD-FORBIDDEN',
         'name' => 'Forbidden Edit',
         'category_id' => $this->category->id,
-        'stock' => 10,
+        'stock_baik' => 10,
+        'stock_rusak' => 0,
+        'stock_perlu_perbaikan' => 0,
         'location' => 'Rak Z',
-        'condition' => 'good',
     ]);
 
     $response->assertStatus(403);
@@ -185,6 +194,20 @@ test('manager cannot delete product', function () {
     $this->assertDatabaseHas('products', ['id' => $product->id, 'deleted_at' => null]);
 });
 
+// ── ACCESSORS TESTS ──
+
+test('product total_stock accessor sums all 3 condition columns', function () {
+    $product = Product::factory()->create([
+        'category_id' => $this->category->id,
+        'stock_baik' => 10,
+        'stock_rusak' => 3,
+        'stock_perlu_perbaikan' => 2,
+    ]);
+
+    expect($product->total_stock)->toBe(15)
+        ->and($product->available_stock)->toBe(10);
+});
+
 // ── SEARCH & FILTER TESTS ──
 
 test('can search products by name or code', function () {
@@ -203,20 +226,15 @@ test('can search products by name or code', function () {
     $response->assertDontSee('Kursi Kayu');
 });
 
-test('can filter products by category and condition', function () {
+test('can filter products by category', function () {
     $user = createProductUserWithRole('Manager');
     $otherCategory = Category::factory()->create(['name' => 'Furniture']);
 
-    $p1 = Product::factory()->create(['name' => 'Laptop', 'category_id' => $this->category->id, 'condition' => 'good']);
-    $p2 = Product::factory()->create(['name' => 'Kursi', 'category_id' => $otherCategory->id, 'condition' => 'damaged']);
+    $p1 = Product::factory()->create(['name' => 'Laptop', 'category_id' => $this->category->id]);
+    $p2 = Product::factory()->create(['name' => 'Kursi', 'category_id' => $otherCategory->id]);
 
     // Filter category
     $response = $this->actingAs($user)->get(route('products.index', ['category_id' => $this->category->id]));
     $response->assertSee('Laptop');
     $response->assertDontSee('Kursi');
-
-    // Filter condition
-    $response = $this->actingAs($user)->get(route('products.index', ['condition' => 'damaged']));
-    $response->assertSee('Kursi');
-    $response->assertDontSee('Laptop');
 });

@@ -20,15 +20,19 @@ class DashboardService
     {
         $totalCategories = Category::count();
         $totalProductTypes = Product::count();
-        $totalProductUnits = (int) Product::sum('stock');
+
+        // Total units across all conditions
+        $totalProductUnits = (int) Product::selectRaw(
+            'SUM(stock_baik + stock_rusak + stock_perlu_perbaikan) as total'
+        )->value('total');
 
         // Sum quantity in borrowing_details where borrowing status is 'borrowed'
         $borrowedUnits = (int) BorrowingDetail::whereHas('borrowing', function ($q) {
             $q->where('status', 'borrowed');
         })->sum('quantity');
 
-        // Sum stock of good items that are currently in the warehouse (represented by 'good' condition stock)
-        $availableUnits = (int) Product::where('condition', 'good')->sum('stock');
+        // Available units = only good-condition stock eligible for borrowing
+        $availableUnits = (int) Product::sum('stock_baik');
 
         return [
             'total_categories' => $totalCategories,
@@ -89,8 +93,7 @@ class DashboardService
     }
 
     /**
-     * Get list of products with low stock (below or equal to threshold).
-     * Only checks good condition items.
+     * Get list of products with low good-condition stock (below or equal to threshold).
      *
      * @return Collection<int, Product>
      */
@@ -99,9 +102,8 @@ class DashboardService
         $threshold = config('inventory.low_stock_threshold', 5);
 
         return Product::with('category')
-            ->where('condition', 'good')
-            ->where('stock', '<=', $threshold)
-            ->orderBy('stock')
+            ->where('stock_baik', '<=', $threshold)
+            ->orderBy('stock_baik')
             ->get();
     }
 }

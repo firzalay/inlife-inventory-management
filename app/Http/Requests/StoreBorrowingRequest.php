@@ -52,11 +52,11 @@ class StoreBorrowingRequest extends FormRequest
                     }
                 }
 
-                // Check stock for each aggregated product
+                // Check stock_baik for each aggregated product
                 foreach ($productQuantities as $productId => $totalQty) {
                     $product = Product::find($productId);
                     if ($product) {
-                        if ($product->stock < $totalQty) {
+                        if ($product->stock_baik < $totalQty) {
                             // Find the first index that contains this product to attach error
                             $errorIndex = 0;
                             foreach ($items as $index => $item) {
@@ -67,7 +67,7 @@ class StoreBorrowingRequest extends FormRequest
                             }
                             $validator->errors()->add(
                                 "items.{$errorIndex}.quantity",
-                                "Stok untuk barang '{$product->name}' tidak mencukupi. Tersedia: {$product->stock} unit, diminta: {$totalQty} unit."
+                                "Stok untuk barang '{$product->name}' tidak mencukupi. Tersedia (baik): {$product->stock_baik} unit, diminta: {$totalQty} unit."
                             );
                         }
                     }

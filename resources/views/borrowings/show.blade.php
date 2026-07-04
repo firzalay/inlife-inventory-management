@@ -73,15 +73,24 @@
                                 <td style="padding: 12px 16px; text-align: right; color: #000; font-weight: 600;">{{ $detail->quantity }} unit</td>
                                 @if($borrowing->status === 'returned')
                                     <td style="padding: 12px 16px;">
+                                        @php
+                                            $conditionOnReturn = $detail->condition_on_return ?? 'Baik';
+                                            [$bg, $color, $border] = match($conditionOnReturn) {
+                                                'Baik' => ['#defbe6', '#0e6027', '#24a148'],
+                                                'Rusak' => ['#fff1f1', '#750e13', '#da1e28'],
+                                                'Perlu Perbaikan' => ['#fef9e7', '#7b5e00', '#f1c21b'],
+                                                default => ['#f4f4f4', '#4d4d4d', '#8c8c8c'], // Hilang
+                                            };
+                                        @endphp
                                         <span style="
                                             display: inline-block;
                                             padding: 2px 8px;
                                             font-size: 12px;
-                                            background: {{ $detail->condition_on_return === 'Baik' ? '#defbe6' : '#fff1f1' }};
-                                            color: {{ $detail->condition_on_return === 'Baik' ? '#0e6027' : '#750e13' }};
-                                            border: 1px solid {{ $detail->condition_on_return === 'Baik' ? '#24a148' : '#da1e28' }};
+                                            background: {{ $bg }};
+                                            color: {{ $color }};
+                                            border: 1px solid {{ $border }};
                                         ">
-                                            {{ $detail->condition_on_return ?? 'Baik' }}
+                                            {{ $conditionOnReturn }}
                                         </span>
                                     </td>
                                 @endif
@@ -112,6 +121,7 @@
                                     <select name="conditions[{{ $detail->id }}]" required
                                             style="width: 100%; padding: 8px 12px; background: #f4f4f4; border: none; border-bottom: 1px solid #000; font-size: 13px; font-family: inherit; cursor: pointer;">
                                         <option value="Baik">Baik</option>
+                                        <option value="Perlu Perbaikan">Perlu Perbaikan</option>
                                         <option value="Rusak">Rusak</option>
                                         <option value="Hilang">Hilang</option>
                                     </select>
