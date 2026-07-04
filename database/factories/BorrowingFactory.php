@@ -18,10 +18,12 @@ class BorrowingFactory extends Factory
     public function definition(): array
     {
         $borrowDate = fake()->dateTimeBetween('-1 month', 'now');
+        $dueDate = fake()->dateTimeBetween($borrowDate, '+1 month');
 
         return [
             'borrower_name' => fake()->name(),
             'borrow_date' => $borrowDate,
+            'due_date' => $dueDate,
             'return_date' => fake()->optional()->dateTimeBetween($borrowDate, '+1 month'),
             'status' => fake()->randomElement(['borrowed', 'returned', 'overdue']),
         ];

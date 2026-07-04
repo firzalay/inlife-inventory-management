@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BorrowingController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -38,6 +39,25 @@ Route::middleware(['auth', 'verified', 'role:Admin|Staff'])
 Route::middleware(['auth', 'verified', 'role:Admin|Staff|Manager'])
     ->group(function () {
         Route::resource('products', ProductController::class)->only(['index', 'show']);
+    });
+
+/**
+ * Borrowings — Admin & Staff write actions (create, store, return).
+ */
+Route::middleware(['auth', 'verified', 'role:Admin|Staff'])
+    ->group(function () {
+        Route::get('borrowings/create', [BorrowingController::class, 'create'])->name('borrowings.create');
+        Route::post('borrowings', [BorrowingController::class, 'store'])->name('borrowings.store');
+        Route::post('borrowings/{borrowing}/return', [BorrowingController::class, 'returnGoods'])->name('borrowings.return');
+    });
+
+/**
+ * Borrowings — read-only list & details for all roles.
+ */
+Route::middleware(['auth', 'verified', 'role:Admin|Staff|Manager'])
+    ->group(function () {
+        Route::get('borrowings', [BorrowingController::class, 'index'])->name('borrowings.index');
+        Route::get('borrowings/{borrowing}', [BorrowingController::class, 'show'])->name('borrowings.show');
     });
 
 /**
