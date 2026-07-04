@@ -7,12 +7,27 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
 
 #[Fillable(['borrower_name', 'borrow_date', 'due_date', 'return_date', 'status'])]
 class Borrowing extends Model
 {
     /** @use HasFactory<BorrowingFactory> */
     use HasFactory;
+
+    /**
+     * Boot the model and clear stats cache on saved/deleted events.
+     */
+    protected static function booted(): void
+    {
+        static::saved(function () {
+            Cache::forget('dashboard_stats');
+        });
+
+        static::deleted(function () {
+            Cache::forget('dashboard_stats');
+        });
+    }
 
     /**
      * Get the attributes that should be cast.

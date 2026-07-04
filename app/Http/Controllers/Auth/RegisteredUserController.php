@@ -46,6 +46,10 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        if ($user->hasRole('Staff')) {
+            return redirect(route('products.index', absolute: false));
+        }
+
         return redirect(route('dashboard', absolute: false));
     }
 }

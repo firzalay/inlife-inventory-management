@@ -58,7 +58,7 @@ test('seeded staff user can login', function () {
         'password' => 'password',
     ]);
 
-    $response->assertRedirect(route('dashboard'));
+    $response->assertRedirect(route('products.index'));
     $this->assertAuthenticated();
 });
 
