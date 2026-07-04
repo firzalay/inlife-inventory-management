@@ -67,7 +67,7 @@
             @else
                 <div style="display: flex; flex-direction: column; gap: 12px;">
                     @foreach($lowStockProducts as $product)
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #f4f4f4; border-left: 3px solid {{ $product->stock == 0 ? '#da1e28' : '#f1c21b' }};">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #f4f4f4; border-left: 3px solid {{ $product->stock_baik == 0 ? '#da1e28' : '#f1c21b' }};">
                             <div>
                                 <h4 style="font-size: 13px; font-weight: 600; color: #000; margin: 0;">
                                     <a href="{{ route('products.show', $product) }}" style="color: #ff0d00; text-decoration: none;">
@@ -82,10 +82,10 @@
                                     padding: 2px 8px;
                                     font-size: 11px;
                                     font-weight: 600;
-                                    background: {{ $product->stock == 0 ? '#fff1f1' : '#fdf6dd' }};
-                                    color: {{ $product->stock == 0 ? '#da1e28' : '#8e6a00' }};
+                                    background: {{ $product->stock_baik == 0 ? '#fff1f1' : '#fdf6dd' }};
+                                    color: {{ $product->stock_baik == 0 ? '#da1e28' : '#8e6a00' }};
                                 ">
-                                    Sisa: {{ $product->stock }}
+                                    Sisa: {{ $product->stock_baik }}
                                 </span>
                             </div>
                         </div>

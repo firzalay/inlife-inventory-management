@@ -95,6 +95,7 @@
                         <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #000; letter-spacing: 0.16px;">Tgl Pinjam</th>
                         <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #000; letter-spacing: 0.16px;">Tgl Batas Kembali</th>
                         <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #000; letter-spacing: 0.16px;">Tgl Kembali Aktual</th>
+                        <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #000; letter-spacing: 0.16px;">Kondisi Kembali</th>
                         <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #000; letter-spacing: 0.16px;">Status</th>
                         <th style="padding: 12px 16px; text-align: right; font-weight: 600; color: #000; letter-spacing: 0.16px;">Aksi</th>
                     </tr>
@@ -114,6 +115,28 @@
                             <td style="padding: 12px 16px; color: #4d4d4d;">{{ $borrowing->due_date->format('d M Y') }}</td>
                             <td style="padding: 12px 16px; color: #4d4d4d;">
                                 {{ $borrowing->return_date ? $borrowing->return_date->format('d M Y') : '—' }}
+                            </td>
+                            <td style="padding: 12px 16px; color: #4d4d4d;">
+                                <ul style="margin: 0; padding-left: 16px; list-style-type: square; font-size: 13px;">
+                                    @foreach($borrowing->details as $detail)
+                                        <li>
+                                            @if($borrowing->status === 'returned')
+                                                @php
+                                                    $cond = $detail->condition_on_return ?? 'Baik';
+                                                    $color = match($cond) {
+                                                        'Baik' => '#24a148',
+                                                        'Rusak' => '#da1e28',
+                                                        'Perlu Perbaikan' => '#f1c21b',
+                                                        default => '#8c8c8c',
+                                                    };
+                                                @endphp
+                                                <span style="color: {{ $color }}; font-weight: 600;">{{ $cond }}</span>
+                                            @else
+                                                <span style="color: #8c8c8c;">—</span>
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                </ul>
                             </td>
                             <td style="padding: 12px 16px;">
                                 <x-borrowing-status-badge :status="$borrowing->computed_status" />

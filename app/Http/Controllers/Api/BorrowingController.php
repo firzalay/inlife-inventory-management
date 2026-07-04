@@ -103,7 +103,7 @@ class BorrowingController extends Controller
                     'quantity' => $item['quantity'],
                 ]);
 
-                $product->decrement('stock', $item['quantity']);
+                $product->decrement('stock_baik', $item['quantity']);
             }
 
             return $newBorrowing;
@@ -131,7 +131,7 @@ class BorrowingController extends Controller
 
         $validated = $request->validate([
             'conditions' => ['required', 'array'],
-            'conditions.*' => ['required', 'string', 'in:Baik,Rusak,Hilang'],
+            'conditions.*' => ['required', 'string', 'in:Baik,Rusak,Perlu Perbaikan,Hilang'],
         ]);
 
         DB::transaction(function () use ($validated, $borrowing) {
@@ -148,10 +148,15 @@ class BorrowingController extends Controller
                     'condition_on_return' => $condition,
                 ]);
 
-                // Restore stock locking the product row to avoid race conditions
+                // Route returned units to the appropriate condition stock column
                 $product = Product::lockForUpdate()->find($detail->product_id);
                 if ($product) {
-                    $product->increment('stock', $detail->quantity);
+                    match ($condition) {
+                        'Baik' => $product->increment('stock_baik', $detail->quantity),
+                        'Rusak' => $product->increment('stock_rusak', $detail->quantity),
+                        'Perlu Perbaikan' => $product->increment('stock_perlu_perbaikan', $detail->quantity),
+                        default => null, // 'Hilang' — no stock restoration
+                    };
                 }
             }
         });

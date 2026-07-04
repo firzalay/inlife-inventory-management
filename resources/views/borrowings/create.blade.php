@@ -96,8 +96,8 @@
                                         style="width: 100%; padding: 11px 16px; background: #f4f4f4; border: none; border-bottom: 1px solid #000; font-size: 14px; outline: none; font-family: inherit; cursor: pointer;">
                                     <option value="">Pilih barang...</option>
                                     @foreach($products as $product)
-                                        <option value="{{ $product->id }}" data-stock="{{ $product->stock }}" {{ (isset($oldItem['product_id']) && $oldItem['product_id'] == $product->id) ? 'selected' : '' }}>
-                                            {{ $product->name }} ({{ $product->code }}) — Stok: {{ $product->stock }}
+                                        <option value="{{ $product->id }}" data-stock="{{ $product->stock_baik }}" {{ (isset($oldItem['product_id']) && $oldItem['product_id'] == $product->id) ? 'selected' : '' }}>
+                                            {{ $product->name }} ({{ $product->code }}) — Stok: {{ $product->stock_baik }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -166,8 +166,8 @@
                                 style="width: 100%; padding: 11px 16px; background: #f4f4f4; border: none; border-bottom: 1px solid #000; font-size: 14px; outline: none; font-family: inherit; cursor: pointer;">
                             <option value="">Pilih barang...</option>
                             @foreach($products as $product)
-                                <option value="{{ $product->id }}" data-stock="{{ $product->stock }}">
-                                    {{ $product->name }} ({{ $product->code }}) — Stok: {{ $product->stock }}
+                                <option value="{{ $product->id }}" data-stock="{{ $product->stock_baik }}">
+                                    {{ $product->name }} ({{ $product->code }}) — Stok: {{ $product->stock_baik }}
                                 </option>
                             @endforeach
                         </select>

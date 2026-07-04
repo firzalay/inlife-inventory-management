@@ -32,10 +32,6 @@ class ProductController extends Controller
             $query->where('category_id', $request->integer('category_id'));
         }
 
-        if ($request->filled('condition')) {
-            $query->where('condition', $request->string('condition'));
-        }
-
         $products = $query->paginate(12)->withQueryString();
         $categories = Category::orderBy('name')->get();
 
