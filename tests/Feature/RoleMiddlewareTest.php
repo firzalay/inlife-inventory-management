@@ -63,12 +63,12 @@ test('admin can access reports routes', function () {
 // Staff access tests
 // ================================================================
 
-test('staff can access the dashboard', function () {
+test('staff cannot access the dashboard', function () {
     $staff = userWithRole('Staff');
 
     $response = $this->actingAs($staff)->get('/dashboard');
 
-    $response->assertStatus(200);
+    $response->assertStatus(403);
 });
 
 test('staff can access inventory routes', function () {

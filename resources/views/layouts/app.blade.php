@@ -14,6 +14,9 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+        <!-- Chart.js for dashboard graphs -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
         <style>
             /* ============================================================
                Carbon Shell — App Layout Tokens
@@ -204,10 +207,49 @@
             </a>
             <span class="c-header__spacer"></span>
             <div class="c-header__user">
-                <span>{{ Auth::user()->name }}</span>
-                <form method="POST" action="{{ route('logout') }}" style="margin:0;">
+                <!-- Notification Bell -->
+                @auth
+                <div style="position: relative; display: inline-block;" id="bell-dropdown-container">
+                    <button type="button" onclick="toggleBellDropdown()" style="background: none; border: none; color: #b3b3b3; cursor: pointer; padding: 4px; display: flex; align-items: center; position: relative;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#b3b3b3'">
+                        <span style="font-size: 18px;">&#128276;</span>
+                        @if(auth()->user()->unreadNotifications->count() > 0)
+                            <span style="position: absolute; top: -2px; right: -2px; display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; font-size: 10px; font-weight: 600; color: #fff; background-color: #ff0d00; border-radius: 50% !important; line-height: 1;" id="unread-count-badge">
+                                {{ auth()->user()->unreadNotifications->count() }}
+                            </span>
+                        @endif
+                    </button>
+
+                    <!-- Dropdown Panel -->
+                    <div id="bell-dropdown" style="display: none; position: absolute; right: 0; top: 100%; margin-top: 8px; width: 320px; background: #ffffff; border: 1px solid #e0e0e0; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 300; text-align: left;">
+                        <div style="padding: 12px 16px; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; background: #f4f4f4;">
+                            <span style="font-size: 12px; font-weight: 600; color: #000; letter-spacing: 0.32px; text-transform: uppercase;">Notifikasi ({{ auth()->user()->unreadNotifications->count() }})</span>
+                        </div>
+                        <div style="max-height: 280px; overflow-y: auto;">
+                            @if(auth()->user()->unreadNotifications->isEmpty())
+                                <div style="padding: 24px; text-align: center; color: #8c8c8c; font-size: 13px;">Tidak ada notifikasi baru</div>
+                            @else
+                                @foreach(auth()->user()->unreadNotifications as $notification)
+                                    <div style="padding: 12px 16px; border-bottom: 1px solid #e0e0e0; font-size: 13px; color: #333; line-height: 1.4;">
+                                        <p style="margin: 0 0 6px 0; font-weight: 400;">{{ $notification->data['message'] ?? 'Stok menipis' }}</p>
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <span style="font-size: 11px; color: #8c8c8c;">{{ $notification->created_at->diffForHumans() }}</span>
+                                            <form method="POST" action="{{ route('notifications.read', $notification->id) }}" style="margin: 0;">
+                                                @csrf
+                                                <button type="submit" style="background: none; border: none; color: #ff0d00; font-size: 11px; cursor: pointer; padding: 0;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Tandai dibaca</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                @endauth
+
+                <span style="margin-left: 8px;">{{ Auth::user()->name }}</span>
+                <form method="POST" action="{{ route('logout') }}" style="margin:0; display: inline;">
                     @csrf
-                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();">
+                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" style="margin-left: 8px;">
                         Sign out
                     </a>
                 </form>
@@ -267,5 +309,24 @@
 
             {{ $slot }}
         </main>
+        <!-- Bell dropdown script -->
+        <script>
+            function toggleBellDropdown() {
+                const dropdown = document.getElementById('bell-dropdown');
+                if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+                    dropdown.style.display = 'block';
+                } else {
+                    dropdown.style.display = 'none';
+                }
+            }
+
+            window.addEventListener('click', function(e) {
+                const container = document.getElementById('bell-dropdown-container');
+                const dropdown = document.getElementById('bell-dropdown');
+                if (dropdown && container && !container.contains(e.target)) {
+                    dropdown.style.display = 'none';
+                }
+            });
+        </script>
     </body>
 </html>

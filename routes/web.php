@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BorrowingController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -10,11 +11,20 @@ Route::get('/', function () {
 });
 
 /**
- * Authenticated & verified routes available to all roles.
+ * Authenticated & verified dashboard route — accessible to Admin & Manager only.
  */
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified', 'role:Admin|Manager'])
+    ->name('dashboard');
+
+/**
+ * Notifications — mark as read route.
+ */
+Route::post('/notifications/{notification}/read', function (string $id) {
+    auth()->user()->unreadNotifications->where('id', $id)->markAsRead();
+
+    return back();
+})->middleware(['auth'])->name('notifications.read');
 
 /**
  * Profile management — available to all authenticated users.
@@ -64,9 +74,7 @@ Route::middleware(['auth', 'verified', 'role:Admin|Staff|Manager'])
  * Admin-only routes — full access to all inventory management features.
  */
 Route::middleware(['auth', 'verified', 'role:Admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 });
 
 /**
@@ -74,7 +82,7 @@ Route::middleware(['auth', 'verified', 'role:Admin'])->prefix('admin')->name('ad
  */
 Route::middleware(['auth', 'verified', 'role:Admin|Staff'])->prefix('inventory')->name('inventory.')->group(function () {
     Route::get('/', function () {
-        return view('dashboard');
+        return view('inventory.index');
     })->name('index');
 });
 
@@ -82,9 +90,7 @@ Route::middleware(['auth', 'verified', 'role:Admin|Staff'])->prefix('inventory')
  * Manager routes — read-only access to dashboard and reports.
  */
 Route::middleware(['auth', 'verified', 'role:Admin|Manager'])->prefix('reports')->name('reports.')->group(function () {
-    Route::get('/', function () {
-        return view('dashboard');
-    })->name('index');
+    Route::get('/', [DashboardController::class, 'index'])->name('index');
 });
 
 require __DIR__.'/auth.php';

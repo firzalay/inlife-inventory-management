@@ -28,6 +28,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        if ($request->user()->hasRole('Staff')) {
+            return redirect()->intended(route('products.index'));
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

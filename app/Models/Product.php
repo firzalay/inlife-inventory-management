@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\LowStockNotification;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,12 +10,37 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 
 #[Fillable(['code', 'name', 'category_id', 'stock', 'location', 'condition', 'image'])]
 class Product extends Model
 {
     /** @use HasFactory<ProductFactory> */
     use HasFactory, SoftDeletes;
+
+    /**
+     * Boot the model and listen to stock changes to trigger notifications.
+     */
+    protected static function booted(): void
+    {
+        static::saved(function (Product $product) {
+            Cache::forget('dashboard_stats');
+
+            $threshold = config('inventory.low_stock_threshold', 5);
+
+            // Only notify if stock was changed and has reached or dropped below threshold
+            if ($product->stock <= $threshold && ($product->wasChanged('stock') || $product->wasRecentlyCreated)) {
+                $recipients = User::role(['Admin', 'Staff'])->get();
+                foreach ($recipients as $user) {
+                    $user->notify(new LowStockNotification($product));
+                }
+            }
+        });
+
+        static::deleted(function () {
+            Cache::forget('dashboard_stats');
+        });
+    }
 
     /**
      * Get the attributes that should be cast.
