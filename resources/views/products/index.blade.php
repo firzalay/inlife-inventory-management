@@ -55,12 +55,19 @@
             </button>
             @if(request()->hasAny(['search','category_id']))
                 <a href="{{ route('products.index') }}"
-                   style="padding: 12px 16px; background: #f4f4f4; color: #4d4d4d; font-size: 14px; text-decoration: none; letter-spacing: 0.16px; border: 1px solid #e0e0e0;"
+                   style="padding: 12px 16px; background: #f4f4f4; color: #4d4d4d; font-size: 14px; text-decoration: none; letter-spacing: 0.16px; border: 1px solid #e0e0e0; display: inline-flex; align-items: center;"
                    onmouseover="this.style.background='#e0e0e0'"
                    onmouseout="this.style.background='#f4f4f4'">
                     Reset
                 </a>
             @endif
+            <a href="{{ route('products.export.pdf', request()->query()) }}"
+               id="btn-export-pdf"
+               style="padding: 12px 16px; background: #ff0d00; color: #fff; font-size: 14px; text-decoration: none; letter-spacing: 0.16px; display: inline-flex; align-items: center; border: none;"
+               onmouseover="this.style.background='#d90b00'"
+               onmouseout="this.style.background='#ff0d00'">
+                Export PDF
+            </a>
         </div>
     </form>
 

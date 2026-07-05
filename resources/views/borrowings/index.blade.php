@@ -77,6 +77,15 @@
                     Reset
                 </a>
             @endif
+            @role('Admin|Manager')
+            <a href="{{ route('borrowings.export.pdf', request()->query()) }}"
+               id="btn-export-pdf"
+               style="padding: 12px 16px; background: #ff0d00; color: #fff; font-size: 14px; text-decoration: none; letter-spacing: 0.16px; display: inline-flex; align-items: center; border: none;"
+               onmouseover="this.style.background='#d90b00'"
+               onmouseout="this.style.background='#ff0d00'">
+                Export PDF
+            </a>
+            @endrole
         </div>
     </form>
 

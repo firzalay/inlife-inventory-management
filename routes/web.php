@@ -48,6 +48,7 @@ Route::middleware(['auth', 'verified', 'role:Admin|Staff'])
  */
 Route::middleware(['auth', 'verified', 'role:Admin|Staff|Manager'])
     ->group(function () {
+        Route::get('products/export/pdf', [ProductController::class, 'exportPdf'])->name('products.export.pdf');
         Route::resource('products', ProductController::class)->only(['index', 'show']);
     });
 
@@ -59,6 +60,14 @@ Route::middleware(['auth', 'verified', 'role:Admin|Staff'])
         Route::get('borrowings/create', [BorrowingController::class, 'create'])->name('borrowings.create');
         Route::post('borrowings', [BorrowingController::class, 'store'])->name('borrowings.store');
         Route::post('borrowings/{borrowing}/return', [BorrowingController::class, 'returnGoods'])->name('borrowings.return');
+    });
+
+/**
+ * Borrowings — export pdf action for Admin & Manager.
+ */
+Route::middleware(['auth', 'verified', 'role:Admin|Manager'])
+    ->group(function () {
+        Route::get('borrowings/export/pdf', [BorrowingController::class, 'exportPdf'])->name('borrowings.export.pdf');
     });
 
 /**
