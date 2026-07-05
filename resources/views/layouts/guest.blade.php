@@ -14,24 +14,31 @@
 
         <!-- Scripts & Styles -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script>
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        </script>
     </head>
-    <body style="font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f4; margin: 0;">
+    <body style="font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif; background-color: var(--color-surface-1); color: var(--color-ink); margin: 0;">
 
         {{-- Carbon utility bar --}}
-        <div style="background-color: #f4f4f4; border-bottom: 1px solid #e0e0e0; height: 32px; display: flex; align-items: center; padding: 0 24px;">
-            <span style="font-size: 12px; color: #4d4d4d; letter-spacing: 0.32px;">InLife Inventory Management</span>
+        <div style="background-color: var(--color-surface-1); border-bottom: 1px solid var(--color-hairline); height: 32px; display: flex; align-items: center; padding: 0 24px;">
+            <span style="font-size: 12px; color: var(--color-ink-muted); letter-spacing: 0.32px;">InLife Inventory Management</span>
         </div>
 
         {{-- Carbon top nav --}}
-        <nav style="background-color: #ffffff; border-bottom: 1px solid #e0e0e0; height: 48px; display: flex; align-items: center; padding: 0 24px;">
-            <a href="/" style="font-size: 14px; font-weight: 600; color: #000000; letter-spacing: 0.16px; text-decoration: none;">
+        <nav style="background-color: var(--color-canvas); border-bottom: 1px solid var(--color-hairline); height: 48px; display: flex; align-items: center; padding: 0 24px;">
+            <a href="/" style="font-size: 14px; font-weight: 600; color: var(--color-ink); letter-spacing: 0.16px; text-decoration: none;">
                 <span style="color: #ff0d00;">&#9632;</span>&nbsp; InLife
             </a>
         </nav>
 
         {{-- Auth card shell --}}
         <div style="min-height: calc(100vh - 80px); display: flex; align-items: center; justify-content: center; padding: 48px 16px;">
-            <div style="width: 100%; max-width: 400px; background-color: #ffffff; border: 1px solid #e0e0e0; padding: 48px;">
+            <div style="width: 100%; max-width: 400px; background-color: var(--color-canvas); border: 1px solid var(--color-hairline); padding: 48px;">
                 {{ $slot }}
             </div>
         </div>

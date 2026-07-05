@@ -104,7 +104,15 @@
             const labels = @json($chartData['labels']);
             const data = @json($chartData['data']);
 
-            new Chart(ctx, {
+            const isDark = () => document.documentElement.classList.contains('dark');
+            const getColors = () => ({
+                textColor: isDark() ? '#ffffff' : '#000000',
+                gridColor: isDark() ? '#2d2d2d' : '#e0e0e0'
+            });
+
+            let colors = getColors();
+
+            const chart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
@@ -125,17 +133,19 @@
                             beginAtZero: true,
                             ticks: {
                                 precision: 0,
+                                color: colors.textColor,
                                 font: {
                                     family: 'IBM Plex Sans',
                                     size: 11
                                 }
                             },
                             grid: {
-                                color: '#e0e0e0'
+                                color: colors.gridColor
                             }
                         },
                         x: {
                             ticks: {
+                                color: colors.textColor,
                                 font: {
                                     family: 'IBM Plex Sans',
                                     size: 11
@@ -152,6 +162,14 @@
                         }
                     }
                 }
+            });
+
+            window.addEventListener('dark-mode-toggled', () => {
+                const newColors = getColors();
+                chart.options.scales.y.ticks.color = newColors.textColor;
+                chart.options.scales.y.grid.color = newColors.gridColor;
+                chart.options.scales.x.ticks.color = newColors.textColor;
+                chart.update();
             });
         });
     </script>
