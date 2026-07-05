@@ -13,6 +13,13 @@
         <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script>
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        </script>
 
         <!-- Chart.js for dashboard graphs -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -30,8 +37,8 @@
 
             body {
                 font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
-                background-color: #f4f4f4;
-                color: #000;
+                background-color: var(--color-surface-1);
+                color: var(--color-ink);
                 letter-spacing: 0.16px;
                 margin: 0;
             }
@@ -94,8 +101,8 @@
                 left: 0;
                 bottom: 0;
                 width: var(--shell-sidebar-width);
-                background: #ffffff;
-                border-right: 1px solid #e0e0e0;
+                background: var(--color-canvas);
+                border-right: 1px solid var(--color-hairline);
                 z-index: 100;
                 overflow-y: auto;
             }
@@ -106,7 +113,7 @@
 
             .c-sidebar__label {
                 font-size: 12px;
-                color: #8c8c8c;
+                color: var(--color-ink-subtle);
                 letter-spacing: 0.32px;
                 padding: 0 16px;
                 margin-bottom: 4px;
@@ -119,7 +126,7 @@
                 gap: 12px;
                 padding: 12px 16px;
                 font-size: 14px;
-                color: #4d4d4d;
+                color: var(--color-ink-muted);
                 text-decoration: none;
                 letter-spacing: 0.16px;
                 transition: background 0.1s, color 0.1s;
@@ -127,13 +134,13 @@
             }
 
             .c-sidebar__link:hover {
-                background: #f4f4f4;
-                color: #000;
+                background: var(--color-surface-1);
+                color: var(--color-ink);
             }
 
             .c-sidebar__link.active {
-                background: #f4f4f4;
-                color: #000;
+                background: var(--color-surface-1);
+                color: var(--color-ink);
                 border-left-color: #ff0d00;
                 font-weight: 600;
             }
@@ -151,20 +158,20 @@
             .c-page-header {
                 margin-bottom: 24px;
                 padding-bottom: 16px;
-                border-bottom: 1px solid #e0e0e0;
+                border-bottom: 1px solid var(--color-hairline);
             }
 
             .c-page-header h1 {
                 font-size: 20px;
                 font-weight: 400;
-                color: #000;
+                color: var(--color-ink);
                 margin: 0 0 4px;
                 letter-spacing: 0;
             }
 
             .c-page-header p {
                 font-size: 14px;
-                color: #4d4d4d;
+                color: var(--color-ink-muted);
                 margin: 0;
             }
 
@@ -198,7 +205,17 @@
             }
         </style>
     </head>
-    <body>
+    <body x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }"
+          x-init="$watch('darkMode', val => { 
+              localStorage.setItem('darkMode', val); 
+              if (val) { 
+                  document.documentElement.classList.add('dark'); 
+              } else { 
+                  document.documentElement.classList.remove('dark'); 
+              } 
+              window.dispatchEvent(new CustomEvent('dark-mode-toggled', { detail: val }));
+          })"
+          :class="{ 'dark': darkMode }">
         <!-- Carbon Header -->
         <header class="c-header">
             <a href="{{ route('dashboard') }}" class="c-header__brand">
@@ -207,6 +224,15 @@
             </a>
             <span class="c-header__spacer"></span>
             <div class="c-header__user">
+                <!-- Dark Mode Toggle Button -->
+                <button type="button" id="dark-mode-toggle" @click="darkMode = !darkMode"
+                        style="background: none; border: none; color: #b3b3b3; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; font-size: 18px;"
+                        onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#b3b3b3'"
+                        title="Toggle Tema Gelap/Terang">
+                    <span x-show="!darkMode">&#127769;</span>
+                    <span x-show="darkMode">&#9728;&#65039;</span>
+                </button>
+
                 <!-- Notification Bell -->
                 @auth
                 <div style="position: relative; display: inline-block;" id="bell-dropdown-container">
@@ -220,19 +246,19 @@
                     </button>
 
                     <!-- Dropdown Panel -->
-                    <div id="bell-dropdown" style="display: none; position: absolute; right: 0; top: 100%; margin-top: 8px; width: 320px; background: #ffffff; border: 1px solid #e0e0e0; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 300; text-align: left;">
-                        <div style="padding: 12px 16px; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; background: #f4f4f4;">
-                            <span style="font-size: 12px; font-weight: 600; color: #000; letter-spacing: 0.32px; text-transform: uppercase;">Notifikasi ({{ auth()->user()->unreadNotifications->count() }})</span>
+                    <div id="bell-dropdown" style="display: none; position: absolute; right: 0; top: 100%; margin-top: 8px; width: 320px; background: var(--color-canvas); border: 1px solid var(--color-hairline); box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 300; text-align: left;">
+                        <div style="padding: 12px 16px; border-bottom: 1px solid var(--color-hairline); display: flex; justify-content: space-between; align-items: center; background: var(--color-surface-1);">
+                            <span style="font-size: 12px; font-weight: 600; color: var(--color-ink); letter-spacing: 0.32px; text-transform: uppercase;">Notifikasi ({{ auth()->user()->unreadNotifications->count() }})</span>
                         </div>
                         <div style="max-height: 280px; overflow-y: auto;">
                             @if(auth()->user()->unreadNotifications->isEmpty())
-                                <div style="padding: 24px; text-align: center; color: #8c8c8c; font-size: 13px;">Tidak ada notifikasi baru</div>
+                                <div style="padding: 24px; text-align: center; color: var(--color-ink-subtle); font-size: 13px;">Tidak ada notifikasi baru</div>
                             @else
                                 @foreach(auth()->user()->unreadNotifications as $notification)
-                                    <div style="padding: 12px 16px; border-bottom: 1px solid #e0e0e0; font-size: 13px; color: #333; line-height: 1.4;">
+                                    <div style="padding: 12px 16px; border-bottom: 1px solid var(--color-hairline); font-size: 13px; color: var(--color-ink-muted); line-height: 1.4;">
                                         <p style="margin: 0 0 6px 0; font-weight: 400;">{{ $notification->data['message'] ?? 'Stok menipis' }}</p>
                                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                                            <span style="font-size: 11px; color: #8c8c8c;">{{ $notification->created_at->diffForHumans() }}</span>
+                                            <span style="font-size: 11px; color: var(--color-ink-subtle);">{{ $notification->created_at->diffForHumans() }}</span>
                                             <form method="POST" action="{{ route('notifications.read', $notification->id) }}" style="margin: 0;">
                                                 @csrf
                                                 <button type="submit" style="background: none; border: none; color: #ff0d00; font-size: 11px; cursor: pointer; padding: 0;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Tandai dibaca</button>

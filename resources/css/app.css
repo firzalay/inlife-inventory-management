@@ -51,6 +51,120 @@
     --spacing-section: 96px;
 }
 
+.dark {
+    /* Surfaces */
+    --color-canvas: #121212;
+    --color-surface-1: #1c1c1c;
+    --color-surface-2: #262626;
+    --color-hairline: #262626;
+    --color-hairline-strong: #ffffff;
+    --color-inverse-canvas: #ffffff;
+    --color-inverse-surface-1: #f4f4f4;
+
+    /* Text */
+    --color-ink: #ffffff;
+    --color-ink-muted: #c6c6c6;
+    --color-ink-subtle: #8d8d8d;
+    --color-inverse-ink: #000000;
+    --color-inverse-ink-muted: #4d4d4d;
+}
+
+/* Override utility classes & elements using hardcoded inline styles in dark mode */
+.dark body {
+    background-color: var(--color-canvas) !important;
+    color: var(--color-ink) !important;
+}
+
+.dark [style*="background: #fff"],
+.dark [style*="background-color: #ffffff"],
+.dark [style*="background: #ffffff"],
+.dark [style*="background-color: #fff"],
+.dark [style*="background:  #fff"] {
+    background-color: var(--color-canvas) !important;
+    background: var(--color-canvas) !important;
+}
+
+.dark [style*="background: #f4f4f4"],
+.dark [style*="background-color: #f4f4f4"],
+.dark [style*="background:  #f4f4f4"] {
+    background-color: var(--color-surface-1) !important;
+    background: var(--color-surface-1) !important;
+}
+
+.dark [style*="border: 1px solid #e0e0e0"],
+.dark [style*="border:1px solid #e0e0e0"] {
+    border-color: var(--color-hairline) !important;
+}
+.dark [style*="border-bottom: 1px solid #e0e0e0"] {
+    border-bottom-color: var(--color-hairline) !important;
+}
+.dark [style*="border-right: 1px solid #e0e0e0"] {
+    border-right-color: var(--color-hairline) !important;
+}
+.dark [style*="border-top: 1px solid #e0e0e0"] {
+    border-top-color: var(--color-hairline) !important;
+}
+.dark [style*="border-left: 1px solid #e0e0e0"] {
+    border-left-color: var(--color-hairline) !important;
+}
+
+.dark [style*="color: #000"],
+.dark [style*="color: #000000"] {
+    color: var(--color-ink) !important;
+}
+
+.dark [style*="color: #4d4d4d"] {
+    color: var(--color-ink-muted) !important;
+}
+
+.dark [style*="color: #8c8c8c"] {
+    color: var(--color-ink-subtle) !important;
+}
+
+/* Ensure tables, dropdowns, input elements etc automatically apply correct theme colors */
+.dark table,
+.dark tr,
+.dark th,
+.dark td {
+    background-color: var(--color-canvas) !important;
+    color: var(--color-ink) !important;
+    border-color: var(--color-hairline) !important;
+}
+
+.dark select,
+.dark input,
+.dark textarea {
+    background-color: var(--color-surface-1) !important;
+    color: var(--color-ink) !important;
+    border-color: var(--color-hairline-strong) !important;
+}
+
+.dark select option {
+    background-color: var(--color-surface-1);
+    color: var(--color-ink);
+}
+
+.dark .bg-white {
+    background-color: var(--color-canvas) !important;
+}
+
+.dark .text-gray-800,
+.dark .text-gray-900,
+.dark .text-gray-700 {
+    color: var(--color-ink) !important;
+}
+
+.dark .text-gray-600,
+.dark .text-gray-500 {
+    color: var(--color-ink-muted) !important;
+}
+
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-gray-300 {
+    border-color: var(--color-hairline) !important;
+}
+
 /* ============================================================
    Base Reset — Carbon defaults
    ============================================================ */
