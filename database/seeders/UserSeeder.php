@@ -20,18 +20,21 @@ class UserSeeder extends Seeder
                 'name' => 'Admin Inventaris',
                 'email' => 'admin@inventaris.test',
                 'password' => Hash::make('password'),
+                'status' => 'approved',
                 'role' => 'Admin',
             ],
             [
                 'name' => 'Staff Inventaris',
                 'email' => 'staff@inventaris.test',
                 'password' => Hash::make('password'),
+                'status' => 'approved',
                 'role' => 'Staff',
             ],
             [
                 'name' => 'Manager Inventaris',
                 'email' => 'manager@inventaris.test',
                 'password' => Hash::make('password'),
+                'status' => 'approved',
                 'role' => 'Manager',
             ],
         ];

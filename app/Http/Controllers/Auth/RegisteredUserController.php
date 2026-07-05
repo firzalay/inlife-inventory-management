@@ -4,14 +4,16 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Notifications\NewUserRegisteredNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Role;
 
 class RegisteredUserController extends Controller
 {
@@ -40,16 +42,22 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'status' => 'pending',
         ]);
+
+        // Ensure role exists (essential for robust test environments)
+        Role::firstOrCreate(['name' => 'Staff', 'guard_name' => 'web']);
+        $user->assignRole('Staff');
 
         event(new Registered($user));
 
-        Auth::login($user);
-
-        if ($user->hasRole('Staff')) {
-            return redirect(route('products.index', absolute: false));
+        // Notify admins of new registration (checking role existence for test robustness)
+        $adminRole = Role::where('name', 'Admin')->first();
+        if ($adminRole) {
+            $admins = User::role('Admin')->get();
+            Notification::send($admins, new NewUserRegisteredNotification($user));
         }
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->route('register.pending');
     }
 }
