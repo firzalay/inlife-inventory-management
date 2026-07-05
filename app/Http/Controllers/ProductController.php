@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ProductsExport;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Category;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductController extends Controller
 {
@@ -50,6 +52,14 @@ class ProductController extends Controller
         ]);
 
         return $pdf->stream('laporan-data-barang.pdf');
+    }
+
+    /**
+     * Export products data to Excel with active search/filters.
+     */
+    public function exportExcel(Request $request)
+    {
+        return Excel::download(new ProductsExport($request->all()), 'laporan-data-barang.xlsx');
     }
 
     /**
