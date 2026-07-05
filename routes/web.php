@@ -4,6 +4,7 @@ use App\Http\Controllers\BorrowingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -80,6 +81,18 @@ Route::middleware(['auth', 'verified', 'role:Admin|Staff|Manager'])
         Route::get('borrowings', [BorrowingController::class, 'index'])->name('borrowings.index');
         Route::get('borrowings/{borrowing}', [BorrowingController::class, 'show'])->name('borrowings.show');
     });
+
+/**
+ * Admin-only User & Role Management.
+ */
+Route::middleware(['auth', 'verified', 'role:Admin'])->group(function () {
+    Route::get('users', [UserController::class, 'index'])->name('users.index');
+    Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
+    Route::post('users/{user}/approve', [UserController::class, 'approve'])->name('users.approve');
+    Route::post('users/{user}/reject', [UserController::class, 'reject'])->name('users.reject');
+    Route::patch('users/{user}/role', [UserController::class, 'updateRole'])->name('users.role.update');
+    Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+});
 
 /**
  * Admin-only routes — full access to all inventory management features.

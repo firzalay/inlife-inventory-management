@@ -283,6 +283,25 @@
             </div>
             @endrole
 
+            @role('Admin')
+            <div class="c-sidebar__section">
+                <div class="c-sidebar__label">Manajemen</div>
+                <a href="{{ route('users.index') }}"
+                   class="c-sidebar__link {{ request()->routeIs('users.*') ? 'active' : '' }}">
+                    <span class="c-sidebar__icon">&#128101;</span>
+                    Kelola User
+                    @php
+                        $pendingUsersCount = \App\Models\User::where('status', 'pending')->count();
+                    @endphp
+                    @if($pendingUsersCount > 0)
+                        <span style="display: inline-flex; align-items: center; justify-content: center; background: #ff0d00; color: #fff; font-size: 11px; font-weight: 600; padding: 2px 6px; margin-left: auto;" id="pending-users-badge">
+                            {{ $pendingUsersCount }}
+                        </span>
+                    @endif
+                </a>
+            </div>
+            @endrole
+
             <div class="c-sidebar__section">
                 <div class="c-sidebar__label">Akun</div>
                 <a href="{{ route('profile.edit') }}"

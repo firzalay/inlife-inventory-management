@@ -25,9 +25,12 @@ test('user can register with valid credentials', function () {
         'password_confirmation' => 'password',
     ]);
 
-    $response->assertRedirect(route('dashboard'));
-    $this->assertAuthenticated();
-    $this->assertDatabaseHas('users', ['email' => 'test@example.com']);
+    $response->assertRedirect(route('register.pending'));
+    $this->assertGuest();
+    $this->assertDatabaseHas('users', [
+        'email' => 'test@example.com',
+        'status' => 'pending',
+    ]);
 });
 
 test('user can login with valid credentials', function () {

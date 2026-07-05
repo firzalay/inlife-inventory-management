@@ -29,6 +29,14 @@ class AuthController extends Controller
             return $this->errorResponse('Kredensial login tidak cocok.', 401);
         }
 
+        if ($user->status === 'pending') {
+            return $this->errorResponse('Akun Anda belum disetujui oleh Admin. Silakan tunggu konfirmasi.', 403);
+        }
+
+        if ($user->status === 'rejected') {
+            return $this->errorResponse('Pendaftaran Anda ditolak. Hubungi Admin untuk informasi lebih lanjut.', 403);
+        }
+
         $token = $user->createToken('api-token')->plainTextToken;
 
         return $this->successResponse([
