@@ -68,6 +68,13 @@
                onmouseout="this.style.background='#ff0d00'">
                 Export PDF
             </a>
+            <a href="{{ route('products.export.excel', request()->query()) }}"
+               id="btn-export-excel"
+               style="padding: 12px 16px; background: #000; color: #fff; font-size: 14px; text-decoration: none; letter-spacing: 0.16px; display: inline-flex; align-items: center; border: none; margin-left: 4px;"
+               onmouseover="this.style.background='#262626'"
+               onmouseout="this.style.background='#000'">
+                Export Excel
+            </a>
         </div>
     </form>
 

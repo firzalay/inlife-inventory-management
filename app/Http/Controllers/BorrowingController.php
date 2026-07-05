@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\BorrowingsExport;
 use App\Http\Requests\StoreBorrowingRequest;
 use App\Models\Borrowing;
 use App\Models\BorrowingDetail;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BorrowingController extends Controller
 {
@@ -63,6 +65,14 @@ class BorrowingController extends Controller
         ]);
 
         return $pdf->stream('laporan-riwayat-peminjaman.pdf');
+    }
+
+    /**
+     * Export borrowing history data to Excel with active filters.
+     */
+    public function exportExcel(Request $request)
+    {
+        return Excel::download(new BorrowingsExport($request->all()), 'laporan-riwayat-peminjaman.xlsx');
     }
 
     /**
