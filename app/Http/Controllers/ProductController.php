@@ -6,13 +6,52 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProductController extends Controller
 {
+    /**
+     * Export products data to PDF with active search/filters.
+     */
+    public function exportPdf(Request $request): Response
+    {
+        $query = Product::with('category')->latest();
+
+        if ($request->filled('search')) {
+            $search = $request->string('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('code', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->integer('category_id'));
+        }
+
+        $products = $query->get();
+
+        $filterCategory = null;
+        if ($request->filled('category_id')) {
+            $filterCategory = Category::find($request->integer('category_id'));
+        }
+
+        $pdf = Pdf::loadView('pdf.products', [
+            'products' => $products,
+            'search' => $request->query('search'),
+            'category' => $filterCategory,
+            'date' => now()->format('d M Y H:i'),
+            'user' => auth()->user(),
+        ]);
+
+        return $pdf->stream('laporan-data-barang.pdf');
+    }
+
     /**
      * Display a paginated list of products with search and filters.
      */

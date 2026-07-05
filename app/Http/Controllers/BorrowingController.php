@@ -6,13 +6,65 @@ use App\Http\Requests\StoreBorrowingRequest;
 use App\Models\Borrowing;
 use App\Models\BorrowingDetail;
 use App\Models\Product;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class BorrowingController extends Controller
 {
+    /**
+     * Export borrowing history data to PDF with active filters.
+     */
+    public function exportPdf(Request $request): Response
+    {
+        $query = Borrowing::with('details.product')->latest();
+
+        // Filter: Borrower name
+        if ($request->filled('search')) {
+            $search = $request->string('search');
+            $query->where('borrower_name', 'like', "%{$search}%");
+        }
+
+        // Filter: Date Range (borrow_date)
+        if ($request->filled('start_date')) {
+            $query->whereDate('borrow_date', '>=', $request->date('start_date'));
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('borrow_date', '<=', $request->date('end_date'));
+        }
+
+        // Filter: Status (borrowed, returned, overdue)
+        if ($request->filled('status')) {
+            $status = $request->string('status');
+            if ($status === 'returned') {
+                $query->where('status', 'returned');
+            } elseif ($status === 'overdue') {
+                $query->where('status', 'borrowed')
+                    ->whereDate('due_date', '<', now()->startOfDay());
+            } elseif ($status === 'borrowed') {
+                $query->where('status', 'borrowed')
+                    ->whereDate('due_date', '>=', now()->startOfDay());
+            }
+        }
+
+        $borrowings = $query->get();
+
+        $pdf = Pdf::loadView('pdf.borrowings', [
+            'borrowings' => $borrowings,
+            'search' => $request->query('search'),
+            'status' => $request->query('status'),
+            'start_date' => $request->query('start_date'),
+            'end_date' => $request->query('end_date'),
+            'date' => now()->format('d M Y H:i'),
+            'user' => auth()->user(),
+        ]);
+
+        return $pdf->stream('laporan-riwayat-peminjaman.pdf');
+    }
+
     /**
      * Display a paginated list of borrowings with filters.
      */
