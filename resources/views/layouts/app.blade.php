@@ -14,17 +14,37 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script>
-            if (localStorage.getItem('darkMode') === 'true') {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
+            function applyTheme(isDark) {
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+                window.dispatchEvent(new CustomEvent('dark-mode-toggled', { detail: isDark }));
             }
+
+            function toggleThemeGlobal() {
+                const isDark = !document.documentElement.classList.contains('dark');
+                localStorage.setItem('darkMode', isDark);
+                applyTheme(isDark);
+            }
+
+            // Initial check
+            const savedDarkMode = localStorage.getItem('darkMode');
+            const isSystemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const isDarkTheme = savedDarkMode === 'true' || (savedDarkMode === null && isSystemDark);
+            applyTheme(isDarkTheme);
         </script>
 
         <!-- Chart.js for dashboard graphs -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
         <style>
+            .theme-icon-moon { display: inline-block; }
+            .theme-icon-sun { display: none; }
+            .dark .theme-icon-moon { display: none; }
+            .dark .theme-icon-sun { display: inline-block; }
+
             /* ============================================================
                Carbon Shell — App Layout Tokens
                ============================================================ */
@@ -225,12 +245,14 @@
             <span class="c-header__spacer"></span>
             <div class="c-header__user">
                 <!-- Dark Mode Toggle Button -->
-                <button type="button" id="dark-mode-toggle" @click="darkMode = !darkMode"
+                <button type="button" id="dark-mode-toggle" 
+                        @click="darkMode = !darkMode"
+                        onclick="if(!window.Alpine) { toggleThemeGlobal(); }"
                         style="background: none; border: none; color: #b3b3b3; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; font-size: 18px;"
                         onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#b3b3b3'"
                         title="Toggle Tema Gelap/Terang">
-                    <span x-show="!darkMode">&#127769;</span>
-                    <span x-show="darkMode">&#9728;&#65039;</span>
+                    <span class="theme-icon-moon">&#127769;</span>
+                    <span class="theme-icon-sun">&#9728;&#65039;</span>
                 </button>
 
                 <!-- Notification Bell -->
