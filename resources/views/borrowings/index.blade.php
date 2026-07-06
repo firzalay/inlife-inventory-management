@@ -158,10 +158,7 @@
                                 <x-borrowing-status-badge :status="$borrowing->computed_status" />
                             </td>
                             <td style="padding: 12px 16px; text-align: right;">
-                                <a href="{{ route('borrowings.show', $borrowing) }}"
-                                   style="font-size: 12px; color: #ff0d00; text-decoration: none; padding: 6px 12px; border: 1px solid #e0e0e0; background: #fff;"
-                                   onmouseover="this.style.background='#ff0d00'; this.style.color='#fff';"
-                                   onmouseout="this.style.background='#fff'; this.style.color='#ff0d00';">
+                                <a href="{{ route('borrowings.show', $borrowing) }}" class="c-btn-action-primary">
                                     Lihat Detail
                                 </a>
                             </td>

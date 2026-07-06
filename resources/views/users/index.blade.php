@@ -127,9 +127,7 @@
                                         </form>
                                     @endif
                                     <a href="{{ route('users.show', $user) }}"
-                                       style="font-size: 12px; color: #ff0d00; text-decoration: none; padding: 6px 12px; border: 1px solid #e0e0e0; background: #fff;"
-                                       onmouseover="this.style.background='#ff0d00'; this.style.color='#fff';"
-                                       onmouseout="this.style.background='#fff'; this.style.color='#ff0d00';">
+                                       class="c-btn-action-primary">
                                         Detail / Ubah Role
                                     </a>
                                 </div>

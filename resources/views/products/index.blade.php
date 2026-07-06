@@ -129,26 +129,17 @@
                             <td style="padding: 12px 16px; color: #4d4d4d;">{{ $product->location }}</td>
                             <td style="padding: 12px 16px; text-align: right;">
                                 <div style="display: inline-flex; gap: 8px; align-items: center;">
-                                    <a href="{{ route('products.show', $product) }}"
-                                       style="font-size: 12px; color: #4d4d4d; text-decoration: none; padding: 4px 8px; border: 1px solid #e0e0e0;"
-                                       onmouseover="this.style.background='#f4f4f4'"
-                                       onmouseout="this.style.background='transparent'">Detail</a>
+                                    <a href="{{ route('products.show', $product) }}" class="c-btn-action">Detail</a>
 
                                     @role('Admin|Staff')
-                                    <a href="{{ route('products.edit', $product) }}"
-                                       style="font-size: 12px; color: #4d4d4d; text-decoration: none; padding: 4px 8px; border: 1px solid #e0e0e0;"
-                                       onmouseover="this.style.background='#f4f4f4'"
-                                       onmouseout="this.style.background='transparent'">Edit</a>
+                                    <a href="{{ route('products.edit', $product) }}" class="c-btn-action">Edit</a>
 
                                     <form method="POST" action="{{ route('products.destroy', $product) }}"
                                           style="display: inline;"
                                           onsubmit="return confirm('Yakin ingin menghapus barang ini? Riwayat peminjaman tetap tersimpan.');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit"
-                                                style="font-size: 12px; color: #da1e28; background: none; border: 1px solid #da1e28; padding: 4px 8px; cursor: pointer; font-family: inherit; letter-spacing: 0.16px;"
-                                                onmouseover="this.style.background='#fff1f1'"
-                                                onmouseout="this.style.background='none'">
+                                        <button type="submit" class="c-btn-action-danger">
                                             Hapus
                                         </button>
                                     </form>
