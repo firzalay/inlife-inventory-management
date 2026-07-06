@@ -24,3 +24,19 @@ test('guest layout contains head FOUC script', function () {
     $response->assertStatus(200);
     $response->assertSee('localStorage.getItem(\'darkMode\') === \'true\'', false);
 });
+
+test('dashboard link is visible to Admin and Manager but hidden from Staff', function () {
+    $admin = User::factory()->create(['status' => 'approved']);
+    $admin->assignRole('Admin');
+
+    $staff = User::factory()->create(['status' => 'approved']);
+    $staff->assignRole('Staff');
+
+    // Admin should see it
+    $responseAdmin = $this->actingAs($admin)->get(route('dashboard'));
+    $responseAdmin->assertSee('Dashboard');
+
+    // Staff should not see it
+    $responseStaff = $this->actingAs($staff)->get(route('products.index'));
+    $responseStaff->assertDontSee('Dashboard');
+});

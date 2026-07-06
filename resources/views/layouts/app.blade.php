@@ -306,6 +306,7 @@
 
         <!-- Carbon Sidebar -->
         <aside class="c-sidebar">
+            @role('Admin|Manager')
             <div class="c-sidebar__section">
                 <div class="c-sidebar__label">Main</div>
                 <a href="{{ route('dashboard') }}"
@@ -314,6 +315,7 @@
                     Dashboard
                 </a>
             </div>
+            @endrole
 
             @role('Admin|Staff|Manager')
             <div class="c-sidebar__section">
