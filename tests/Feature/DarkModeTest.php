@@ -3,12 +3,19 @@
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 uses(RefreshDatabase::class);
 
+beforeEach(function () {
+    $this->app->make(PermissionRegistrar::class)->forgetCachedPermissions();
+    Role::firstOrCreate(['name' => 'Admin', 'guard_name' => 'web']);
+    Role::firstOrCreate(['name' => 'Staff', 'guard_name' => 'web']);
+    Role::firstOrCreate(['name' => 'Manager', 'guard_name' => 'web']);
+});
+
 test('app layout contains dark mode toggle button and head FOUC script', function () {
     $user = User::factory()->create(['status' => 'approved']);
-    Role::firstOrCreate(['name' => 'Admin', 'guard_name' => 'web']);
     $user->assignRole('Admin');
 
     $response = $this->actingAs($user)->get(route('dashboard'));

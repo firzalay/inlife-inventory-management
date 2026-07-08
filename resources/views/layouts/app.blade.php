@@ -12,6 +12,9 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
 
+        <!-- Font Awesome 6 for sidebar and theme icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script>
             function applyTheme(isDark) {
@@ -251,15 +254,15 @@
                         style="background: none; border: none; color: #b3b3b3; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; font-size: 18px;"
                         onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#b3b3b3'"
                         title="Toggle Tema Gelap/Terang">
-                    <span class="theme-icon-moon">&#127769;</span>
-                    <span class="theme-icon-sun">&#9728;&#65039;</span>
+                    <i class="fa-solid fa-moon theme-icon-moon"></i>
+                    <i class="fa-solid fa-sun theme-icon-sun"></i>
                 </button>
 
                 <!-- Notification Bell -->
                 @auth
                 <div style="position: relative; display: inline-block;" id="bell-dropdown-container">
                     <button type="button" onclick="toggleBellDropdown()" style="background: none; border: none; color: #b3b3b3; cursor: pointer; padding: 4px; display: flex; align-items: center; position: relative;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#b3b3b3'">
-                        <span style="font-size: 18px;">&#128276;</span>
+                        <i class="fa-solid fa-bell" style="font-size: 18px;"></i>
                         @if(auth()->user()->unreadNotifications->count() > 0)
                             <span style="position: absolute; top: -2px; right: -2px; display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; font-size: 10px; font-weight: 600; color: #fff; background-color: #ff0d00; border-radius: 50% !important; line-height: 1;" id="unread-count-badge">
                                 {{ auth()->user()->unreadNotifications->count() }}
@@ -311,7 +314,7 @@
                 <div class="c-sidebar__label">Main</div>
                 <a href="{{ route('dashboard') }}"
                    class="c-sidebar__link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                    <span class="c-sidebar__icon">&#9689;</span>
+                    <i class="fa-solid fa-chart-pie c-sidebar__icon"></i>
                     Dashboard
                 </a>
             </div>
@@ -322,12 +325,12 @@
                 <div class="c-sidebar__label">Inventaris</div>
                 <a href="{{ route('products.index') }}"
                    class="c-sidebar__link {{ request()->routeIs('products.*') ? 'active' : '' }}">
-                    <span class="c-sidebar__icon">&#9723;</span>
+                    <i class="fa-solid fa-box c-sidebar__icon"></i>
                     Data Barang
                 </a>
                 <a href="{{ route('borrowings.index') }}"
                    class="c-sidebar__link {{ request()->routeIs('borrowings.*') ? 'active' : '' }}">
-                    <span class="c-sidebar__icon">&#9645;</span>
+                    <i class="fa-solid fa-handshake c-sidebar__icon"></i>
                     Peminjaman
                 </a>
             </div>
@@ -338,7 +341,7 @@
                 <div class="c-sidebar__label">Manajemen</div>
                 <a href="{{ route('users.index') }}"
                    class="c-sidebar__link {{ request()->routeIs('users.*') ? 'active' : '' }}">
-                    <span class="c-sidebar__icon">&#128101;</span>
+                    <i class="fa-solid fa-users c-sidebar__icon"></i>
                     Kelola User
                     @php
                         $pendingUsersCount = \App\Models\User::where('status', 'pending')->count();
@@ -356,7 +359,7 @@
                 <div class="c-sidebar__label">Akun</div>
                 <a href="{{ route('profile.edit') }}"
                    class="c-sidebar__link {{ request()->routeIs('profile.*') ? 'active' : '' }}">
-                    <span class="c-sidebar__icon">&#9675;</span>
+                    <i class="fa-solid fa-user c-sidebar__icon"></i>
                     Profil
                 </a>
             </div>
