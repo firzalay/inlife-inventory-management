@@ -93,7 +93,7 @@ Proyek ini sepenuhnya mendukung kontainerisasi menggunakan Docker untuk mempermu
 
 ## ☁️ Deployment ke VPS Ubuntu (Hostinger)
 
-Aplikasi ini sangat mudah dideploy ke VPS Ubuntu menggunakan Docker Compose. Panduan langkah-demi-langkah dari nol hingga setup HTTPS gratis dengan Certbot Let's Encrypt dapat Anda baca langsung pada file dokumentasi terpisah di proyek ini.
+Aplikasi ini sangat mudah dideploy ke VPS Ubuntu menggunakan Docker Compose.
 
 ---
 
